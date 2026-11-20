@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   SubTrack Design System Tokens — Premium Dark SaaS Aesthetic
+   Deep charcoal canvas, elevated cards, off-white typography,
+   muted lavender & soft lime accents, subtle borders & depth.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, sans-serif;
+
+  /* Surfaces & Backgrounds */
+  --color-canvas: #0d0f14;         /* Rich matte charcoal background */
+  --color-canvas-subtle: #11141c;  /* Slightly elevated page background */
+  --color-surface: #161922;        /* Cards, modals, side panels */
+  --color-surface-hover: #1b1f2b;  /* Hovered card surface */
+  --color-raised: #212634;         /* Inputs, pill buttons, nested wells */
+  --color-raised-hover: #292f40;   /* Hovered raised controls */
+
+  /* Borders & Dividers */
+  --color-line: rgba(255, 255, 255, 0.08);         /* Crisp hairline borders */
+  --color-line-strong: rgba(255, 255, 255, 0.14);  /* Active/focused borders */
+  --color-line-subtle: rgba(255, 255, 255, 0.04);  /* Delicate inner dividers */
+
+  /* Typography */
+  --color-fg: #f8fafc;             /* Primary text (clean off-white) */
+  --color-muted: #94a3b8;          /* Secondary text (readable slate-400) */
+  --color-faint: #64748b;          /* Tertiary text / placeholders */
+
+  /* Signature Accents */
+  --color-lavender: #a78bfa;       /* Sophisticated soft purple/lavender */
+  --color-lavender-strong: #906bf9;/* Hover/active purple */
+  --color-lavender-deep: #7c3aed;  /* Deep saturated purple */
+  --color-lavender-glow: rgba(167, 139, 250, 0.22);
+
+  --color-lime: #c4e865;           /* Fresh, organic soft lime */
+  --color-lime-strong: #b2db42;    /* Hover/active lime */
+  --color-lime-glow: rgba(196, 232, 101, 0.22);
+
+  /* Status Colors */
+  --color-danger: #f87171;         /* Coral red */
+  --color-danger-strong: #ef4444;
+  --color-warn: #fbbf24;           /* Warm amber */
+  --color-warn-strong: #f59e0b;
+  --color-info: #60a5fa;           /* Soft sky blue */
+
+  /* Radii */
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
+  --radius-3xl: 1.5rem;
+
+  /* Shadows */
+  --shadow-card: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 4px 16px -2px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 12px 28px -4px rgba(0, 0, 0, 0.55), 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card-featured: inset 0 1px 0 0 rgba(167, 139, 250, 0.25), 0 12px 32px -6px rgba(124, 58, 237, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-pop: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 24px 64px -16px rgba(0, 0, 0, 0.8), 0 4px 16px -4px rgba(0, 0, 0, 0.5);
+  --shadow-lavender: 0 4px 20px -2px rgba(167, 139, 250, 0.35);
+  --shadow-lime: 0 4px 20px -2px rgba(196, 232, 101, 0.3);
+
+  /* Animation Timings */
+  --animate-fade-in: fade-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-rise: rise 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-sheet: sheet 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes sheet {
+    from { opacity: 0.5; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.02); }
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    letter-spacing: -0.01em;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+  ::selection {
+    background: rgba(167, 139, 250, 0.35);
+    color: #ffffff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-lavender);
+    outline-offset: 2px;
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.15s ease;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+  /* Hide number spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer components {
+  /* Premium Dark SaaS Card */
+  .card {
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-line);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card:hover {
+    border-color: var(--color-line-strong);
+  }
+  .card-interactive {
+    cursor: pointer;
+  }
+  .card-interactive:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Glassmorphism accents - subtle and tasteful */
+  .glass-panel {
+    background: rgba(22, 25, 34, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-line);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
