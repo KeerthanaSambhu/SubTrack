@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import config from '../config/index.js';
 import { CURRENCIES, DEFAULT_CURRENCY } from '../utils/constants.js';
-
-const SALT_ROUNDS = 12;
 
 /*
  * User — one document per account.
@@ -48,7 +47,7 @@ const userSchema = new mongoose.Schema(
 // Hash the password whenever it is set or changed (registration, password change).
 userSchema.pre('save', async function hashPassword() {
   if (!this.isModified('password')) return;
-  this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
+  this.password = await bcrypt.hash(this.password, config.bcryptRounds);
   if (!this.isNew) {
     this.passwordChangedAt = new Date();
     this.tokenVersion = (this.tokenVersion || 0) + 1;

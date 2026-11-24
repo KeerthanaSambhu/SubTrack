@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import config from '../config/index.js';
 import User from '../models/User.js';
 import AppError from '../utils/AppError.js';
 import { sendSuccess } from '../utils/respond.js';
@@ -7,7 +8,8 @@ import { validateLogin, validateRegister } from '../validators/authValidators.js
 
 // Compared against when the email doesn't exist, so a login attempt takes the
 // same time either way and doesn't reveal which emails are registered.
-const DUMMY_HASH = bcrypt.hashSync('subtrack-timing-guard', 12);
+// Uses the same cost factor as real hashes so the timing really matches.
+const DUMMY_HASH = bcrypt.hashSync('subtrack-timing-guard', config.bcryptRounds);
 
 // POST /api/auth/register — create an account and sign the user in.
 export async function register(req, res) {
