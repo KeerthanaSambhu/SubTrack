@@ -153,9 +153,9 @@ async function seed() {
     console.log('  Currency: INR (with sample USD plans to showcase multi-currency)\n');
   } catch (error) {
     console.error('✖ Error seeding database:', error);
+    process.exitCode = 1; // report failure to the terminal / CI
   } finally {
     await disconnectDatabase();
-    process.exit(0);
   }
 }
 
