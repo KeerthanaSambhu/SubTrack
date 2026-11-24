@@ -23,7 +23,9 @@ export async function requireAuth(req, res, next) {
 
   const user = await User.findById(payload.sub).select('+tokenVersion');
   if (!user) throw new AppError(401, 'This account no longer exists.');
-  if ((payload.ver ?? 0) !== user.tokenVersion) {
+  // The token must carry exactly the user's current version; tokens issued
+  // before the last password change (or in an older format) are rejected.
+  if (payload.ver !== user.tokenVersion) {
     throw new AppError(401, 'Your password was changed. Please log in again.');
   }
 

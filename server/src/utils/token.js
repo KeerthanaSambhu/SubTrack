@@ -7,7 +7,12 @@ import config from '../config/index.js';
  * without the server noticing.
  */
 export function signToken(user) {
-  return jwt.sign({ sub: user._id.toString(), ver: user.tokenVersion || 0 }, config.jwtSecret, {
+  // tokenVersion is hidden by default (select: false). Signing without it would
+  // silently produce a token that never works, so fail loudly instead.
+  if (!Number.isInteger(user.tokenVersion)) {
+    throw new Error("signToken: load the user with .select('+tokenVersion') first");
+  }
+  return jwt.sign({ sub: user._id.toString(), ver: user.tokenVersion }, config.jwtSecret, {
     expiresIn: config.jwtExpiresIn,
     algorithm: 'HS256',
   });
