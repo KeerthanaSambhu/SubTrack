@@ -10,6 +10,9 @@ import { useAuth } from '../context/AuthContext';
 import { parseApiError } from '../api/client';
 import { compactErrors, validateEmail } from '../lib/validation';
 
+// Created in MongoDB by `npm run seed` (server/src/utils/seed.js).
+const DEMO_CREDENTIALS = { email: 'demo@subtrack.app', password: 'Password123' };
+
 export default function LoginPage() {
   const { login } = useAuth();
   const location = useLocation();
@@ -17,6 +20,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
 
   const set = (field) => (e) => {
     setValues((v) => ({ ...v, [field]: e.target.value }));
@@ -41,6 +45,25 @@ export default function LoginPage() {
       setErrors(fieldErrors);
       setFormError(message);
       setSubmitting(false);
+    }
+  };
+
+  // Signs straight in to the seeded demo account through the real API.
+  const handleTryDemo = async () => {
+    setValues(DEMO_CREDENTIALS);
+    setErrors({});
+    setFormError('');
+    setDemoLoading(true);
+    try {
+      await login(DEMO_CREDENTIALS);
+    } catch (err) {
+      const { message, status } = parseApiError(err);
+      setFormError(
+        status === 401
+          ? 'The demo account has not been created yet. Run "npm run seed" in the server folder, then try again.'
+          : message,
+      );
+      setDemoLoading(false);
     }
   };
 
@@ -75,14 +98,11 @@ export default function LoginPage() {
         </div>
         <button
           type="button"
-          onClick={() => {
-            setValues({ email: 'demo@subtrack.app', password: 'Password123' });
-            setErrors({});
-            setFormError('');
-          }}
-          className="shrink-0 rounded-xl bg-lavender px-3 py-1.5 text-xs font-semibold text-canvas shadow-sm transition-all hover:bg-lavender-strong active:scale-95"
+          onClick={handleTryDemo}
+          disabled={demoLoading || submitting}
+          className="shrink-0 disabled:opacity-60 rounded-xl bg-lavender px-3 py-1.5 text-xs font-semibold text-canvas shadow-sm transition-all hover:bg-lavender-strong active:scale-95"
         >
-          Autofill
+          {demoLoading ? 'Signing in…' : 'Try demo'}
         </button>
       </div>
 

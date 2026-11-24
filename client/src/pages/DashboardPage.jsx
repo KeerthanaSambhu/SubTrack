@@ -20,7 +20,6 @@ import CategoryDonut from '../components/charts/CategoryDonut';
 import SubscriptionRow from '../components/subscriptions/SubscriptionRow';
 import UpcomingPaymentItem from '../components/subscriptions/UpcomingPaymentItem';
 import OtherCurrenciesNote from '../components/subscriptions/OtherCurrenciesNote';
-import { localSubscriptionApi } from '../lib/storage';
 import { useAuth } from '../context/AuthContext';
 import { useSubscriptions } from '../context/SubscriptionsContext';
 import {
@@ -188,15 +187,6 @@ export default function DashboardPage() {
     />
   );
 
-  const handleLoadSample = async () => {
-    try {
-      await localSubscriptionApi.resetToSampleSubscriptions();
-      await reload();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   if (status === 'loading') {
     return (
       <>
@@ -219,11 +209,7 @@ export default function DashboardPage() {
     return (
       <>
         {header}
-        <WelcomeState
-          name={firstName}
-          onAdd={openCreate}
-          onLoadSample={handleLoadSample}
-        />
+        <WelcomeState name={firstName} onAdd={openCreate} />
       </>
     );
   }
