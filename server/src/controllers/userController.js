@@ -24,15 +24,15 @@ export async function updateProfile(req, res) {
 export async function changePassword(req, res) {
   const { currentPassword, newPassword } = validatePasswordChange(req.body);
 
-  const user = await User.findById(req.user._id).select('+password');
+  const user = await User.findById(req.user._id).select('+password +tokenVersion');
   if (!(await user.comparePassword(currentPassword))) {
     const message = "That isn't your current password.";
     throw new AppError(400, message, { currentPassword: message });
   }
 
-  user.password = newPassword; // hashed by the model's pre-save hook
+  user.password = newPassword; // hashed, and tokenVersion bumped, by the pre-save hook
   await user.save();
 
-  // Older tokens are now invalid, so hand back a fresh one.
-  sendSuccess(res, { token: signToken(user._id) }, { message: 'Password changed.' });
+  // Every older token is now invalid, so hand back a fresh one for this device.
+  sendSuccess(res, { token: signToken(user) }, { message: 'Password changed.' });
 }

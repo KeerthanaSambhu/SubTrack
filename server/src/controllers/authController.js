@@ -19,21 +19,21 @@ export async function register(req, res) {
   }
 
   const user = await User.create(data); // password is hashed by the model's pre-save hook
-  sendSuccess(res, { user, token: signToken(user._id) }, { status: 201, message: 'Account created.' });
+  sendSuccess(res, { user, token: signToken(user) }, { status: 201, message: 'Account created.' });
 }
 
 // POST /api/auth/login — check email + password, then issue a token.
 export async function login(req, res) {
   const { email, password } = validateLogin(req.body);
 
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select('+password +tokenVersion');
   const passwordMatches = await bcrypt.compare(password, user ? user.password : DUMMY_HASH);
   if (!user || !passwordMatches) {
     // Same message for "no such email" and "wrong password" on purpose.
     throw new AppError(401, 'That email and password combination is incorrect.');
   }
 
-  sendSuccess(res, { user, token: signToken(user._id) });
+  sendSuccess(res, { user, token: signToken(user) });
 }
 
 // GET /api/auth/me — who am I? (used to restore a session on page load)

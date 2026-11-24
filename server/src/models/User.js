@@ -4,27 +4,35 @@ import { CURRENCIES, DEFAULT_CURRENCY } from '../utils/constants.js';
 
 const SALT_ROUNDS = 12;
 
+/*
+ * User — one document per account.
+ * A user "owns" many Subscription documents (see Subscription.user).
+ */
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true, maxlength: 60 },
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, // creates a unique index: two accounts can't share an email
       lowercase: true,
       trim: true,
       maxlength: 254,
     },
-    // Never returned by queries unless explicitly requested with .select('+password').
+    // A bcrypt hash, never the real password. `select: false` means queries
+    // leave it out unless code explicitly asks with .select('+password').
     password: { type: String, required: true, select: false },
     currency: { type: String, enum: CURRENCIES, default: DEFAULT_CURRENCY },
-    // Bumped on password change so older tokens stop working.
+    // When the password was last changed (informational; tokenVersion does the invalidating).
     passwordChangedAt: { type: Date, select: false },
+    // Every login token records the version that was current when it was issued.
+    // Bumping this number (on password change) instantly invalidates all older tokens.
+    tokenVersion: { type: Number, default: 0, select: false },
   },
   {
-    timestamps: true,
+    timestamps: true, // adds createdAt and updatedAt automatically
     toJSON: {
-      // Only these fields ever leave the server.
+      // Whitelist: only these fields ever leave the server.
       transform: (doc, ret) => ({
         id: ret._id.toString(),
         name: ret.name,
@@ -37,21 +45,18 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-// Hash the password whenever it is set or changed.
+// Hash the password whenever it is set or changed (registration, password change).
 userSchema.pre('save', async function hashPassword() {
   if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
-  if (!this.isNew) this.passwordChangedAt = new Date();
+  if (!this.isNew) {
+    this.passwordChangedAt = new Date();
+    this.tokenVersion = (this.tokenVersion || 0) + 1;
+  }
 });
 
 userSchema.methods.comparePassword = function comparePassword(candidate) {
   return bcrypt.compare(candidate, this.password);
-};
-
-/** True if the password changed after the token was issued (`iat` is in seconds). */
-userSchema.methods.changedPasswordAfter = function changedPasswordAfter(iat) {
-  if (!this.passwordChangedAt) return false;
-  return Math.floor(this.passwordChangedAt.getTime() / 1000) > iat;
 };
 
 const User = mongoose.model('User', userSchema);
