@@ -1,3 +1,4 @@
+
 import { ChevronRight, Calendar } from 'lucide-react';
 import { SubscriptionAvatar, StatusBadge, CategoryBadge } from '../ui/Badges';
 import { useSubscriptions } from '../../context/SubscriptionsContext';
@@ -9,11 +10,24 @@ import { formatDate, formatMoney } from '../../lib/format';
  * A subscription as a tappable row. Opens the details dialog.
  * `variant="compact"` hides the category / next-payment columns.
  */
-export default function SubscriptionRow({ subscription: sub, variant = 'full' }) {
+export default function SubscriptionRow({
+  subscription: sub,
+  variant = 'full',
+  inrRate = null,
+}) {
   const { openDetails } = useSubscriptions();
   const cycle = getCycle(sub.billingCycle);
   const next = nextPaymentDate(sub);
   const muted = sub.status !== 'active';
+
+  const hasInrEquivalent =
+    sub.currency === 'USD' &&
+    Number.isFinite(inrRate) &&
+    inrRate > 0;
+
+  const inrAmount = hasInrEquivalent
+    ? Number(sub.amount) * inrRate
+    : null;
 
   return (
     <li>
@@ -27,7 +41,10 @@ export default function SubscriptionRow({ subscription: sub, variant = 'full' })
       >
         {/* Category-tinted avatar monogram */}
         <span className="shrink-0">
-          <SubscriptionAvatar subscription={sub} size={variant === 'compact' ? 'sm' : 'md'} />
+          <SubscriptionAvatar
+            subscription={sub}
+            size={variant === 'compact' ? 'sm' : 'md'}
+          />
         </span>
 
         {/* Subscription Name and Category */}
@@ -38,10 +55,16 @@ export default function SubscriptionRow({ subscription: sub, variant = 'full' })
             </span>
             {sub.status !== 'active' && <StatusBadge status={sub.status} />}
           </span>
+
           <span className="mt-0.5 block truncate text-[13px] text-faint">
             {variant === 'full' ? (
-              <span className="sm:hidden">{next ? `Next: ${formatDate(next, { withYear: false })}` : cycle.label}</span>
+              <span className="sm:hidden">
+                {next
+                  ? `Next: ${formatDate(next, { withYear: false })}`
+                  : cycle.label}
+              </span>
             ) : null}
+
             <span className={variant === 'full' ? 'hidden sm:inline-flex items-center gap-2' : ''}>
               {variant === 'full' ? (
                 <>
@@ -64,12 +87,21 @@ export default function SubscriptionRow({ subscription: sub, variant = 'full' })
           </span>
         )}
 
-        {/* Cost & cadence */}
+        {/* Cost, INR equivalent and cadence */}
         <span className="shrink-0 text-right">
           <span className={`block font-display text-sm font-semibold tabular tracking-tight transition-colors ${muted ? 'text-muted' : 'text-fg'}`}>
             {formatMoney(sub.amount, sub.currency)}
           </span>
-          <span className="block text-[11px] text-faint font-medium">per {cycle.noun}</span>
+
+          {hasInrEquivalent && (
+            <span className="mt-0.5 block text-[11px] font-medium text-muted tabular">
+              ≈ {formatMoney(inrAmount, 'INR')}
+            </span>
+          )}
+
+          <span className="block text-[11px] text-faint font-medium">
+            per {cycle.noun}
+          </span>
         </span>
 
         {/* Hover chevron */}

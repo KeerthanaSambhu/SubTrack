@@ -1,3 +1,4 @@
+
 import { useSubscriptions } from '../../context/SubscriptionsContext';
 import { SubscriptionAvatar } from '../ui/Badges';
 import { DUE_SOON_DAYS, getCycle } from '../../lib/constants';
@@ -5,10 +6,23 @@ import { formatDaysLeft, formatMoney } from '../../lib/format';
 import { AlertCircle } from 'lucide-react';
 
 /** One upcoming charge: date tile, name, frequency, countdown and amount. */
-export default function UpcomingPaymentItem({ payment, showAvatar = false }) {
+export default function UpcomingPaymentItem({
+  payment,
+  showAvatar = false,
+  inrRate = null,
+}) {
   const { openDetails } = useSubscriptions();
   const { sub, date, daysLeft } = payment;
   const dueSoon = daysLeft <= DUE_SOON_DAYS;
+
+  const hasInrEquivalent =
+    sub.currency === 'USD' &&
+    Number.isFinite(inrRate) &&
+    inrRate > 0;
+
+  const inrAmount = hasInrEquivalent
+    ? Number(sub.amount) * inrRate
+    : null;
 
   return (
     <li>
@@ -81,11 +95,17 @@ export default function UpcomingPaymentItem({ payment, showAvatar = false }) {
           </span>
         </span>
 
-        {/* Amount */}
+        {/* Amount and INR equivalent */}
         <span className="shrink-0 text-right">
           <span className="block font-display text-sm font-semibold text-fg tabular tracking-tight">
             {formatMoney(sub.amount, sub.currency)}
           </span>
+
+          {hasInrEquivalent && (
+            <span className="mt-0.5 block text-[11px] font-medium text-muted tabular">
+              ≈ {formatMoney(inrAmount, 'INR')}
+            </span>
+          )}
         </span>
       </button>
     </li>
