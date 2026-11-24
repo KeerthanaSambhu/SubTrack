@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Subscription from '../models/Subscription.js';
 import AppError from '../utils/AppError.js';
+import { sendSuccess } from '../utils/respond.js';
 import { assertDatesInOrder, validateSubscription } from '../validators/subscriptionValidators.js';
 
 /**
@@ -19,12 +20,12 @@ async function findOwned(req) {
 // GET /api/subscriptions
 export async function listSubscriptions(req, res) {
   const subscriptions = await Subscription.find({ user: req.user._id }).sort({ createdAt: -1 });
-  res.json({ subscriptions });
+  sendSuccess(res, { subscriptions });
 }
 
 // GET /api/subscriptions/:id
 export async function getSubscription(req, res) {
-  res.json({ subscription: await findOwned(req) });
+  sendSuccess(res, { subscription: await findOwned(req) });
 }
 
 // POST /api/subscriptions
@@ -37,7 +38,7 @@ export async function createSubscription(req, res) {
     ...data,
     user: req.user._id,
   });
-  res.status(201).json({ subscription });
+  sendSuccess(res, { subscription }, { status: 201, message: 'Subscription added.' });
 }
 
 // PATCH /api/subscriptions/:id
@@ -49,12 +50,12 @@ export async function updateSubscription(req, res) {
   assertDatesInOrder(subscription.startDate, subscription.nextPaymentDate);
   await subscription.save();
 
-  res.json({ subscription });
+  sendSuccess(res, { subscription }, { message: 'Subscription updated.' });
 }
 
 // DELETE /api/subscriptions/:id
 export async function deleteSubscription(req, res) {
   const subscription = await findOwned(req);
   await subscription.deleteOne();
-  res.json({ message: 'Subscription deleted.', id: subscription.id });
+  sendSuccess(res, { id: subscription.id }, { message: 'Subscription deleted.' });
 }
