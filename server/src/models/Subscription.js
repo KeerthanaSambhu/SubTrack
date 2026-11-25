@@ -4,7 +4,7 @@ import { BILLING_CYCLES, CATEGORIES, CURRENCIES, DEFAULT_CURRENCY, STATUSES } fr
 const subscriptionSchema = new mongoose.Schema(
   {
     // Owner — every query filters by this, so users only see their own data.
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true, trim: true, maxlength: 60 },
     amount: { type: Number, required: true, min: 0.01, max: 10000000 },
     currency: { type: String, enum: CURRENCIES, default: DEFAULT_CURRENCY },
@@ -32,6 +32,16 @@ const subscriptionSchema = new mongoose.Schema(
     },
   },
 );
+
+/*
+ * Indexes — like a book's index, they let MongoDB find documents without
+ * scanning the whole collection. Both start with `user` because every query
+ * is scoped to one user (so they also serve plain `{ user }` lookups).
+ */
+// Subscription list, newest first.
+subscriptionSchema.index({ user: 1, createdAt: -1 });
+// Dashboard / reminders: "this user's active subscriptions, by next payment".
+subscriptionSchema.index({ user: 1, status: 1, nextPaymentDate: 1 });
 
 subscriptionSchema.pre('save', function trackStatusChange() {
   if (this.isNew || this.isModified('status')) this.statusChangedAt = new Date();

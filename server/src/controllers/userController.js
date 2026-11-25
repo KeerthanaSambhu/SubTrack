@@ -1,9 +1,10 @@
 import User from '../models/User.js';
 import AppError from '../utils/AppError.js';
+import { sendSuccess } from '../utils/respond.js';
 import { signToken } from '../utils/token.js';
 import { validatePasswordChange, validateProfileUpdate } from '../validators/authValidators.js';
 
-// PATCH /api/users/me — name, email and/or currency
+// PATCH /api/users/me — update name, email and/or preferred currency.
 export async function updateProfile(req, res) {
   const updates = validateProfileUpdate(req.body);
 
@@ -16,22 +17,22 @@ export async function updateProfile(req, res) {
 
   Object.assign(req.user, updates);
   await req.user.save();
-  res.json({ user: req.user });
+  sendSuccess(res, { user: req.user }, { message: 'Profile updated.' });
 }
 
-// PATCH /api/users/me/password
+// PATCH /api/users/me/password — requires the current password.
 export async function changePassword(req, res) {
   const { currentPassword, newPassword } = validatePasswordChange(req.body);
 
-  const user = await User.findById(req.user._id).select('+password');
+  const user = await User.findById(req.user._id).select('+password +tokenVersion');
   if (!(await user.comparePassword(currentPassword))) {
     const message = "That isn't your current password.";
     throw new AppError(400, message, { currentPassword: message });
   }
 
-  user.password = newPassword; // hashed by the model's pre-save hook
+  user.password = newPassword; // hashed, and tokenVersion bumped, by the pre-save hook
   await user.save();
 
-  // Older tokens are now invalid, so hand back a fresh one.
-  res.json({ message: 'Password changed.', token: signToken(user._id) });
+  // Every older token is now invalid, so hand back a fresh one for this device.
+  sendSuccess(res, { token: signToken(user) }, { message: 'Password changed.' });
 }

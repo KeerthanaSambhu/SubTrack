@@ -5,6 +5,7 @@ import { useSubscriptions } from '../../context/SubscriptionsContext';
 import { initials } from '../../lib/format';
 import Logo from '../ui/Logo';
 import Button from '../ui/Button';
+import ThemeToggle, { ThemeCycleButton } from '../ui/ThemeToggle';
 import SubscriptionFormModal from '../subscriptions/SubscriptionFormModal';
 import SubscriptionDetailsModal from '../subscriptions/SubscriptionDetailsModal';
 import { PageTransition } from '../ui/Transitions';
@@ -38,7 +39,7 @@ function Sidebar() {
         <Button
           onClick={openCreate}
           variant="primary"
-          className="w-full justify-between shadow-[0_4px_20px_-4px_rgba(167,139,250,0.4)] hover:shadow-[0_6px_24px_-2px_rgba(167,139,250,0.55)] group"
+          className="w-full justify-between group"
         >
           <span className="flex items-center gap-2">
             <span className="flex size-5 items-center justify-center rounded-md bg-canvas/20">
@@ -63,8 +64,8 @@ function Sidebar() {
             className={({ isActive }) =>
               `group relative flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? 'bg-surface text-fg shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_4px_16px_-4px_rgba(0,0,0,0.4)] border border-line-strong'
-                  : 'text-muted hover:bg-surface/60 hover:text-fg'
+                  ? 'bg-surface text-fg shadow-[var(--shadow-nav-active)] border border-line-strong'
+                  : 'border border-transparent text-muted hover:bg-surface/60 hover:text-fg'
               }`
             }
           >
@@ -73,7 +74,7 @@ function Sidebar() {
                 {/* Active left indicator pill */}
                 {isActive && (
                   <span
-                    className="absolute left-0 inset-y-2 w-1 rounded-r-full bg-lavender shadow-[0_0_8px_rgba(167,139,250,0.8)]"
+                    className="absolute left-0 inset-y-2 w-1 rounded-r-full bg-lavender shadow-[0_0_8px_var(--color-lavender-glow)]"
                     aria-hidden
                   />
                 )}
@@ -105,15 +106,19 @@ function Sidebar() {
         ))}
       </nav>
 
-      {/* User & Account Block */}
-      <div className="mt-auto pt-4">
+      {/* Theme + User & Account Block */}
+      <div className="mt-auto space-y-3 pt-4">
+        <div className="flex items-center justify-between px-2">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">Theme</span>
+          <ThemeToggle />
+        </div>
         <div className="group relative flex items-center gap-3 rounded-2xl border border-line bg-surface/80 p-3 shadow-[var(--shadow-card)] transition-colors hover:border-line-strong">
           <div className="relative">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-lavender/25 to-lavender/5 font-display text-sm font-semibold text-lavender ring-1 ring-lavender/20">
               {initials(user?.name)}
             </span>
             <span
-              className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-lime ring-2 ring-surface shadow-[0_0_6px_rgba(196,232,101,0.8)]"
+              className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-lime ring-2 ring-surface shadow-[0_0_6px_var(--color-lime-glow)]"
               title="Active account"
             />
           </div>
@@ -145,7 +150,8 @@ function MobileTopBar() {
       <Link to="/" aria-label="SubTrack home">
         <Logo />
       </Link>
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
+        <ThemeCycleButton />
         <Button size="sm" onClick={openCreate} variant="primary" aria-label="Add subscription">
           <Plus className="size-4" aria-hidden />
           <span className="hidden sm:inline">Add subscription</span>
@@ -167,7 +173,7 @@ function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl lg:hidden shadow-[0_-8px_32px_rgba(0,0,0,0.6)]"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl lg:hidden shadow-[var(--shadow-bar)]"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-5 px-1">
         {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
@@ -186,7 +192,7 @@ function BottomNav() {
                   <span
                     className={`flex h-8 w-13 items-center justify-center rounded-full transition-all duration-200 ${
                       isActive
-                        ? 'bg-lavender/15 text-lavender ring-1 ring-lavender/30 shadow-[0_0_12px_rgba(167,139,250,0.2)]'
+                        ? 'bg-lavender/15 text-lavender ring-1 ring-lavender/30'
                         : 'text-faint group-hover:text-muted'
                     }`}
                   >

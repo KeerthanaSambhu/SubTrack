@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "seed": "node src/utils/seed.js"
+    "seed": "node src/utils/seed.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -18,5 +20,10 @@
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.24.10"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.4.0",
+    "supertest": "^7.3.2",
+    "vitest": "^5.1.1"
   }
 }

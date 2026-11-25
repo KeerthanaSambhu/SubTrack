@@ -8,7 +8,7 @@ const controlBase =
 const borderFor = (error) =>
   error
     ? 'border-danger/60 focus:border-danger ring-1 ring-danger/20'
-    : 'border-line-strong hover:border-white/20 focus:border-lavender';
+    : 'border-line-strong hover:border-fg/20 focus:border-lavender';
 
 /**
  * Field: label + control + hint/error, wired up for screen readers.
@@ -49,9 +49,10 @@ export const Input = forwardRef(function Input({ error, className = '', ...props
   );
 });
 
-export function Select({ error, className = '', children, ...props }) {
+export function Select({ error, className = '', wrapperClassName = '', children, ...props }) {
+  // Width limits belong on the wrapper so the chevron stays inside the box.
   return (
-    <div className="relative">
+    <div className={`relative ${wrapperClassName}`}>
       <select
         className={`${controlBase} h-11 cursor-pointer appearance-none pr-10 ${borderFor(error)} shadow-inner ${className}`}
         {...props}

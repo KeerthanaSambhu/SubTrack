@@ -17,9 +17,15 @@ function required(name) {
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 
+const isTest = nodeEnv === 'test';
+
 const config = {
   env: nodeEnv,
   isProduction: nodeEnv === 'production',
+  isTest,
+  // bcrypt cost factor: each +1 doubles the time to hash (and to brute-force).
+  // Only the test suite may lower it (BCRYPT_ROUNDS), purely to keep tests fast.
+  bcryptRounds: isTest && Number(process.env.BCRYPT_ROUNDS) >= 4 ? Number(process.env.BCRYPT_ROUNDS) : 12,
   port: Number(process.env.PORT) || 5000,
   mongoUri: required('MONGODB_URI'),
   jwtSecret: required('JWT_SECRET'),

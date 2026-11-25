@@ -1,3 +1,4 @@
+
 import { motion, useReducedMotion } from 'motion/react';
 
 export function PageTransition({ children, className = '' }) {
@@ -16,7 +17,12 @@ export function PageTransition({ children, className = '' }) {
   );
 }
 
-export function StaggerContainer({ children, staggerDelay = 0.04, className = '', delayStart = 0 }) {
+export function StaggerContainer({
+  children,
+  staggerDelay = 0.04,
+  className = '',
+  delayStart = 0,
+}) {
   const shouldReduceMotion = useReducedMotion();
 
   if (shouldReduceMotion) {
@@ -63,6 +69,35 @@ export function StaggerItem({ children, className = '' }) {
             ease: [0.16, 1, 0.3, 1],
           },
         },
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export function ScrollReveal({
+  children,
+  className = '',
+  delay = 0,
+  distance = 18,
+}) {
+  const shouldReduceMotion = useReducedMotion();
+
+  if (shouldReduceMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: distance }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{
+        duration: 0.55,
+        delay,
+        ease: [0.16, 1, 0.3, 1],
       }}
       className={className}
     >

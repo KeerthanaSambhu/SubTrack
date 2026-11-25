@@ -53,7 +53,7 @@ export default function SpendingTrendChart({ data, currency }) {
               tickFormatter={(v) => formatMoney(v, currency, { compact: true })}
               allowDecimals={false}
             />
-            <Tooltip content={renderTooltip} cursor={{ fill: 'rgba(255, 255, 255, 0.04)', radius: 8 }} />
+            <Tooltip content={renderTooltip} cursor={{ fill: CHART_COLORS.hoverTint, radius: 8 }} />
             <Bar dataKey="total" radius={[6, 6, 0, 0]} maxBarSize={38} isAnimationActive animationDuration={750} animationEasing="ease-out">
               {data.map((m) => (
                 <Cell

@@ -153,9 +153,17 @@ async function seed() {
     console.log('  Currency: INR (with sample USD plans to showcase multi-currency)\n');
   } catch (error) {
     console.error('✖ Error seeding database:', error);
+    process.exitCode = 1; // report failure to the terminal / CI
   } finally {
-    await disconnectDatabase();
-    process.exit(0);
+    // Always close the connection so Node can exit. We set process.exitCode
+    // rather than calling process.exit(), so a failure recorded above is
+    // never overwritten with "success".
+    try {
+      await disconnectDatabase();
+    } catch (error) {
+      console.error('✖ Could not close the database connection:', error.message);
+      process.exitCode = 1;
+    }
   }
 }
 

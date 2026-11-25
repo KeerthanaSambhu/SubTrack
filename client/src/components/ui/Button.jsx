@@ -2,15 +2,15 @@ import { Loader2 } from 'lucide-react';
 
 const VARIANTS = {
   primary:
-    'bg-lavender text-canvas font-semibold shadow-[var(--shadow-lavender)] hover:bg-lavender-strong active:bg-lavender-strong hover:shadow-[0_6px_24px_-2px_rgba(167,139,250,0.5)] border border-lavender-strong/40',
+    'bg-lavender text-canvas font-semibold shadow-[var(--shadow-lavender)] hover:bg-lavender-strong active:bg-lavender-strong hover:shadow-[0_6px_22px_-4px_var(--color-lavender-glow)] border border-lavender-strong/40',
   accent:
-    'bg-lime text-canvas font-semibold shadow-[var(--shadow-lime)] hover:bg-lime-strong active:bg-lime-strong hover:shadow-[0_6px_24px_-2px_rgba(196,232,101,0.45)] border border-lime-strong/40',
+    'bg-lime text-canvas font-semibold shadow-[var(--shadow-lime)] hover:bg-lime-strong active:bg-lime-strong hover:shadow-[0_6px_22px_-4px_var(--color-lime-glow)] border border-lime-strong/40',
   secondary:
-    'border border-line-strong bg-raised text-fg shadow-sm hover:border-white/20 hover:bg-raised-hover active:bg-raised-hover/90',
+    'border border-line-strong bg-raised text-fg shadow-sm hover:border-fg/20 hover:bg-raised-hover active:bg-raised-hover/90',
   ghost:
     'text-muted hover:bg-raised/80 hover:text-fg active:bg-raised',
   danger:
-    'bg-danger text-canvas font-semibold shadow-[0_4px_16px_-2px_rgba(248,113,113,0.35)] hover:bg-danger-strong active:bg-danger-strong border border-danger-strong/40',
+    'bg-danger text-canvas font-semibold shadow-[0_4px_16px_-4px_color-mix(in_oklab,var(--color-danger)_40%,transparent)] hover:bg-danger-strong active:bg-danger-strong border border-danger-strong/40',
   'danger-ghost':
     'text-danger hover:bg-danger/10 active:bg-danger/15',
   outline:

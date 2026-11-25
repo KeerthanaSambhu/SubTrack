@@ -1,15 +1,34 @@
+
 import { useState } from 'react';
-import { Pencil, Trash2, Pause, Play, Calendar, DollarSign, Clock, Tag } from 'lucide-react';
+import {
+  Pencil,
+  Trash2,
+  Pause,
+  Play,
+  Calendar,
+  DollarSign,
+  Clock,
+  Tag,
+} from 'lucide-react';
 import Modal, { ConfirmDialog } from '../ui/Modal';
 import Button from '../ui/Button';
-import { StatusBadge, CategoryBadge, SubscriptionAvatar } from '../ui/Badges';
+import {
+  StatusBadge,
+  CategoryBadge,
+  SubscriptionAvatar,
+} from '../ui/Badges';
 import { useSubscriptions } from '../../context/SubscriptionsContext';
 import { useToast } from '../../context/ToastContext';
 import { parseApiError } from '../../api/client';
 import { getCycle } from '../../lib/constants';
-import { monthlyCost, nextPaymentDate, yearlyCost } from '../../lib/billing';
+import {
+  monthlyCost,
+  nextPaymentDate,
+  yearlyCost,
+} from '../../lib/billing';
 import { daysBetween, today } from '../../lib/dates';
 import { formatDate, formatDaysLeft, formatMoney } from '../../lib/format';
+import { useExchangeRate } from '../../lib/useExchangeRate';
 
 function Detail({ label, icon: Icon, children }) {
   return (
@@ -18,17 +37,30 @@ function Detail({ label, icon: Icon, children }) {
         {Icon && <Icon className="size-3" aria-hidden />}
         <dt>{label}</dt>
       </div>
-      <dd className="mt-1.5 text-sm font-semibold text-fg tabular">{children}</dd>
+      <dd className="mt-1.5 text-sm font-semibold text-fg tabular">
+        {children}
+      </dd>
     </div>
   );
 }
 
 export default function SubscriptionDetailsModal() {
-  const { detailsSubscription: sub, closeDetails, openEdit, remove, update } = useSubscriptions();
+  const {
+    detailsSubscription: sub,
+    closeDetails,
+    openEdit,
+    remove,
+    update,
+  } = useSubscriptions();
+
   const toast = useToast();
+
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [toggling, setToggling] = useState(false);
+
+  // Fetch the current USD to INR exchange rate.
+  const { rate, rateDate } = useExchangeRate();
 
   if (!sub) return null;
 
@@ -36,8 +68,29 @@ export default function SubscriptionDetailsModal() {
   const next = nextPaymentDate(sub);
   const daysLeft = next ? daysBetween(today(), next) : null;
 
+  const hasInrEquivalent =
+    sub.currency === 'USD' &&
+    Number.isFinite(rate) &&
+    rate > 0;
+
+  const monthlyAmount = monthlyCost(sub);
+  const yearlyAmount = yearlyCost(sub);
+
+  const monthlyInr = hasInrEquivalent
+    ? monthlyAmount * rate
+    : null;
+
+  const yearlyInr = hasInrEquivalent
+    ? yearlyAmount * rate
+    : null;
+
+  const subscriptionInr = hasInrEquivalent
+    ? Number(sub.amount) * rate
+    : null;
+
   const handleDelete = async () => {
     setDeleting(true);
+
     try {
       await remove(sub.id);
       toast.success(`${sub.name} deleted`);
@@ -51,11 +104,19 @@ export default function SubscriptionDetailsModal() {
   };
 
   const handleTogglePause = async () => {
-    const nextStatus = sub.status === 'active' ? 'paused' : 'active';
+    const nextStatus =
+      sub.status === 'active' ? 'paused' : 'active';
+
     setToggling(true);
+
     try {
       await update(sub.id, { status: nextStatus });
-      toast.success(nextStatus === 'paused' ? `${sub.name} paused` : `${sub.name} is active again`);
+
+      toast.success(
+        nextStatus === 'paused'
+          ? `${sub.name} paused`
+          : `${sub.name} is active again`
+      );
     } catch (err) {
       toast.error(parseApiError(err).message);
     } finally {
@@ -80,6 +141,7 @@ export default function SubscriptionDetailsModal() {
               <Trash2 className="size-3.5" aria-hidden />
               <span>Delete</span>
             </Button>
+
             {sub.status !== 'cancelled' && (
               <Button
                 variant="secondary"
@@ -89,13 +151,25 @@ export default function SubscriptionDetailsModal() {
               >
                 {!toggling &&
                   (sub.status === 'active' ? (
-                    <Pause className="size-3.5 text-warn" aria-hidden />
+                    <Pause
+                      className="size-3.5 text-warn"
+                      aria-hidden
+                    />
                   ) : (
-                    <Play className="size-3.5 text-lime" aria-hidden />
+                    <Play
+                      className="size-3.5 text-lime"
+                      aria-hidden
+                    />
                   ))}
-                <span>{sub.status === 'active' ? 'Pause subscription' : 'Resume subscription'}</span>
+
+                <span>
+                  {sub.status === 'active'
+                    ? 'Pause subscription'
+                    : 'Resume subscription'}
+                </span>
               </Button>
             )}
+
             <Button
               variant="primary"
               size="sm"
@@ -113,10 +187,12 @@ export default function SubscriptionDetailsModal() {
         {/* Header Block */}
         <div className="flex items-center gap-4 rounded-2xl border border-line bg-surface p-4 shadow-[var(--shadow-card)]">
           <SubscriptionAvatar subscription={sub} size="lg" />
+
           <div className="min-w-0 flex-1">
             <h3 className="truncate font-display text-xl font-bold tracking-tight text-fg">
               {sub.name}
             </h3>
+
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <CategoryBadge category={sub.category} showBg />
               <StatusBadge status={sub.status} />
@@ -129,14 +205,28 @@ export default function SubscriptionDetailsModal() {
           <p className="text-xs font-semibold uppercase tracking-wider text-lavender">
             Subscription Rate
           </p>
-          <div className="mt-1.5 flex items-baseline gap-2">
+
+          <div className="mt-1.5 flex flex-wrap items-baseline gap-2">
             <span className="font-display text-4xl font-extrabold text-fg tabular tracking-tight">
               {formatMoney(sub.amount, sub.currency)}
             </span>
+
             <span className="font-sans text-sm font-medium text-muted">
               per {cycle.noun} ({cycle.label})
             </span>
           </div>
+
+          {hasInrEquivalent && (
+            <div className="mt-2">
+              <p className="font-display text-xl font-bold text-lime tabular">
+                ≈ {formatMoney(subscriptionInr, 'INR')}
+              </p>
+
+              <p className="mt-1 text-xs text-muted">
+                Approximate INR equivalent
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Metrics Grid */}
@@ -145,30 +235,64 @@ export default function SubscriptionDetailsModal() {
             {next ? (
               <div className="flex flex-col">
                 <span>{formatDate(next)}</span>
+
                 <span className="text-xs font-normal text-muted mt-0.5">
                   {formatDaysLeft(daysLeft)}
                 </span>
               </div>
             ) : (
-              <span className="text-faint font-normal">None scheduled</span>
+              <span className="text-faint font-normal">
+                None scheduled
+              </span>
             )}
           </Detail>
+
           <Detail label="Billing cadence" icon={Tag}>
             {cycle.label}
           </Detail>
+
           <Detail label="Monthly equivalent" icon={DollarSign}>
-            {formatMoney(monthlyCost(sub), sub.currency)}
+            <div className="flex flex-col gap-1">
+              <span>{formatMoney(monthlyAmount, sub.currency)}</span>
+
+              {hasInrEquivalent && (
+                <span className="text-xs font-medium text-lime">
+                  ≈ {formatMoney(monthlyInr, 'INR')}
+                </span>
+              )}
+            </div>
           </Detail>
+
           <Detail label="Yearly equivalent" icon={DollarSign}>
-            {formatMoney(yearlyCost(sub), sub.currency)}
+            <div className="flex flex-col gap-1">
+              <span>{formatMoney(yearlyAmount, sub.currency)}</span>
+
+              {hasInrEquivalent && (
+                <span className="text-xs font-medium text-lime">
+                  ≈ {formatMoney(yearlyInr, 'INR')}
+                </span>
+              )}
+            </div>
           </Detail>
+
           <Detail label="Started on" icon={Clock}>
             {formatDate(sub.startDate)}
           </Detail>
+
           <Detail label="Recorded on" icon={Clock}>
             {formatDate(new Date(sub.createdAt))}
           </Detail>
         </dl>
+
+        {/* Exchange Rate Information */}
+        {hasInrEquivalent && (
+          <p className="mt-3 text-[11px] leading-relaxed text-faint">
+            USD to INR conversion uses the latest available reference
+            exchange rate
+            {rateDate ? ` dated ${rateDate}` : ''}. Actual bank or
+            payment-provider charges may differ.
+          </p>
+        )}
 
         {/* Optional Notes */}
         {sub.notes && (
@@ -176,6 +300,7 @@ export default function SubscriptionDetailsModal() {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-faint">
               Account Notes
             </h4>
+
             <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-fg/90">
               {sub.notes}
             </p>

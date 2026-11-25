@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { LogOut, Sparkles, Shield, User, Coins, Database, Check } from 'lucide-react';
+import { LogOut, Shield, User, Coins, Check, Palette } from 'lucide-react';
+import ThemeToggle from '../components/ui/ThemeToggle';
 import PageHeader from '../components/layout/PageHeader';
 import Button from '../components/ui/Button';
 import PasswordInput from '../components/ui/PasswordInput';
@@ -10,7 +11,6 @@ import { useSubscriptions } from '../context/SubscriptionsContext';
 import { useToast } from '../context/ToastContext';
 import { userApi } from '../api/endpoints';
 import { parseApiError, tokenStorage } from '../api/client';
-import { localSubscriptionApi } from '../lib/storage';
 import { CURRENCIES } from '../lib/constants';
 import { formatDate, initials } from '../lib/format';
 import { compactErrors, validateEmail, validateName, validateNewPassword } from '../lib/validation';
@@ -126,7 +126,7 @@ function CurrencyPreference() {
         hint="All dashboard headline analytics, charts, and summary metrics will automatically calculate in this currency."
       >
         {(ids) => (
-          <Select {...ids} value={user.currency} onChange={handleChange} disabled={saving} className="sm:max-w-xs font-mono font-medium">
+          <Select {...ids} value={user.currency} onChange={handleChange} disabled={saving} wrapperClassName="sm:max-w-xs" className="font-mono font-medium">
             {CURRENCIES.map((c) => (
               <option key={c.value} value={c.value}>
                 {c.value} ({c.symbol}) — {c.label}
@@ -217,8 +217,7 @@ function PasswordForm() {
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
-  const { subscriptions, reload } = useSubscriptions();
-  const toast = useToast();
+  const { subscriptions } = useSubscriptions();
 
   return (
     <>
@@ -235,34 +234,15 @@ export default function SettingsPage() {
           <CurrencyPreference />
         </Section>
 
-        <Section title="Security & Authentication" description="Ensure your account is protected with strong credentials." icon={Shield}>
-          <PasswordForm />
+        <Section title="Appearance" description="Choose light, dark, or follow your device setting." icon={Palette}>
+          <div className="space-y-3">
+            <ThemeToggle showLabels />
+            <p className="text-xs text-faint">Saved on this device. System follows your operating system's light or dark mode.</p>
+          </div>
         </Section>
 
-        <Section title="Sample Workspace Data" description="Quickly populate or reset sample subscriptions for testing." icon={Database}>
-          <div className="space-y-4">
-            <p className="text-xs leading-relaxed text-muted">
-              SubTrack is running with local persistence. All records are safely encrypted in your browser using Web Crypto SHA-256 standard.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={async () => {
-                  try {
-                    await localSubscriptionApi.resetToSampleSubscriptions();
-                    await reload();
-                    toast.success('Sample subscriptions loaded');
-                  } catch (err) {
-                    toast.error(parseApiError(err).message);
-                  }
-                }}
-              >
-                <Sparkles className="size-4 text-lavender" aria-hidden />
-                <span>Reload sample subscriptions</span>
-              </Button>
-            </div>
-          </div>
+        <Section title="Security & Authentication" description="Ensure your account is protected with strong credentials." icon={Shield}>
+          <PasswordForm />
         </Section>
 
         <Section title="Account Status" description="Membership details and session controls.">
@@ -273,7 +253,7 @@ export default function SettingsPage() {
             </div>
             <div className="rounded-2xl border border-line-subtle bg-raised/40 p-4">
               <dt className="text-xs font-semibold uppercase tracking-wider text-faint">Subscriptions</dt>
-              <dd className="mt-1 font-display text-sm font-bold text-fg tabular">{subscriptions.length} active records</dd>
+              <dd className="mt-1 font-display text-sm font-bold text-fg tabular">{subscriptions.length} tracked</dd>
             </div>
             <div className="rounded-2xl border border-line-subtle bg-raised/40 p-4">
               <dt className="text-xs font-semibold uppercase tracking-wider text-faint">Base Currency</dt>
@@ -281,7 +261,7 @@ export default function SettingsPage() {
             </div>
           </dl>
           <div className="mt-6 flex flex-col gap-3 border-t border-line-subtle pt-5 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-muted font-mono">Session ID: {user.email}</p>
+            <p className="text-xs text-muted font-mono">Signed in as {user.email}</p>
             <Button variant="danger-ghost" size="sm" onClick={logout}>
               <LogOut className="size-4" aria-hidden />
               <span>Sign out</span>
