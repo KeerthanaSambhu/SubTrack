@@ -1,14 +1,19 @@
+import { useId } from 'react';
+
 export function LogoMark({ className = 'size-8' }) {
+  // Unique gradient id per instance: a shared id breaks when the first copy
+  // lives in a hidden element (e.g. the desktop sidebar on mobile).
+  const gradientId = `logo-grad-${useId().replace(/:/g, '')}`;
   return (
     <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
       <svg viewBox="0 0 32 32" className="size-full filter drop-shadow-[0_2px_8px_rgba(167,139,250,0.35)]" aria-hidden>
         <defs>
-          <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#A78BFA" />
             <stop offset="100%" stopColor="#7C3AED" />
           </linearGradient>
         </defs>
-        <rect width="32" height="32" rx="10" fill="url(#logoGrad)" />
+        <rect width="32" height="32" rx="10" fill={`url(#${gradientId})`} />
         {/* Modern recurring cycle arc */}
         <path
           d="M10 20.5a6.5 6.5 0 1 0 0-9"

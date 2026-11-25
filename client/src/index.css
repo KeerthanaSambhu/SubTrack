@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   SubTrack Design System Tokens — Premium Dark SaaS Aesthetic
-   Deep charcoal canvas, elevated cards, off-white typography,
-   muted lavender & soft lime accents, subtle borders & depth.
+   SubTrack Design System Tokens
+   Dark is the default (values below). Light mode redefines the same
+   tokens under :root[data-theme="light"] further down, so every
+   utility (bg-surface, text-muted, border-line, bg-lavender/15 ...)
+   switches theme automatically. The attribute is set before first
+   paint by the inline script in index.html (see ThemeContext.jsx).
    ------------------------------------------------------------------ */
 @theme {
   --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -88,6 +91,18 @@
 }
 
 @layer base {
+  /* Helper tokens kept outside @theme so Tailwind always emits them
+     (some are only referenced from JavaScript, e.g. chart props). */
+  :root {
+    --shadow-control: 0 1px 2px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+    --shadow-nav-active: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 4px 14px -6px rgba(0, 0, 0, 0.5);
+    --shadow-bar: 0 -8px 32px rgba(0, 0, 0, 0.5);
+    --color-overlay: rgba(4, 6, 10, 0.72);         /* modal backdrop */
+    --color-hover-tint: rgba(255, 255, 255, 0.04); /* chart hover cursor */
+    --color-grid: rgba(255, 255, 255, 0.06);       /* chart grid lines */
+    --color-sheen: rgba(255, 255, 255, 0.07);      /* top highlight on chips/avatars */
+  }
+
   html {
     color-scheme: dark;
     -webkit-tap-highlight-color: transparent;
@@ -108,8 +123,8 @@
     letter-spacing: -0.025em;
   }
   ::selection {
-    background: rgba(167, 139, 250, 0.35);
-    color: #ffffff;
+    background: color-mix(in oklab, var(--color-lavender) 35%, transparent);
+    color: var(--color-fg);
   }
   :focus-visible {
     outline: 2px solid var(--color-lavender);
@@ -125,15 +140,15 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: color-mix(in oklab, var(--color-fg) 14%, transparent);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.22);
+    background: color-mix(in oklab, var(--color-fg) 26%, transparent);
   }
 
   input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.8);
+    filter: invert(0.8); /* light icon on dark inputs; reset in light mode below */
     cursor: pointer;
     opacity: 0.75;
     transition: opacity 0.15s ease;
@@ -170,7 +185,7 @@
     cursor: pointer;
   }
   .card-interactive:hover {
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: var(--color-line-strong);
     box-shadow: var(--shadow-card-hover);
     transform: translateY(-1px);
   }
@@ -181,10 +196,70 @@
 
   /* Glassmorphism accents - subtle and tasteful */
   .glass-panel {
-    background: rgba(22, 25, 34, 0.75);
+    background: color-mix(in oklab, var(--color-surface) 75%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--color-line);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Light theme — same token names, light values.
+   Accents are darkened so text keeps WCAG AA contrast on white
+   (lavender ~5.4:1, lime ~5:1, warn ~5:1, danger ~4.8:1).
+   ------------------------------------------------------------------ */
+@layer base {
+  :root[data-theme="light"] {
+    color-scheme: light;
+
+    --color-canvas: #f6f7fb;
+    --color-canvas-subtle: #eef0f6;
+    --color-surface: #ffffff;
+    --color-surface-hover: #f9fafc;
+    --color-raised: #f1f3f8;
+    --color-raised-hover: #e8ebf2;
+
+    --color-line: rgba(15, 23, 42, 0.1);
+    --color-line-strong: rgba(15, 23, 42, 0.17);
+    --color-line-subtle: rgba(15, 23, 42, 0.06);
+
+    --color-fg: #0f172a;
+    --color-muted: #475569;
+    --color-faint: #5d6b80;
+
+    --color-lavender: #6d4fd8;
+    --color-lavender-strong: #5b3cc4;
+    --color-lavender-deep: #4c1d95;
+    --color-lavender-glow: rgba(109, 79, 216, 0.16);
+
+    --color-lime: #4d7c0f;
+    --color-lime-strong: #3f6212;
+    --color-lime-glow: rgba(77, 124, 15, 0.16);
+
+    --color-danger: #dc2626;
+    --color-danger-strong: #b91c1c;
+    --color-warn: #b45309;
+    --color-warn-strong: #92400e;
+    --color-info: #2563eb;
+
+    --shadow-card: 0 1px 2px 0 rgba(15, 23, 42, 0.05), 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+    --shadow-card-hover: 0 2px 4px 0 rgba(15, 23, 42, 0.05), 0 12px 24px -8px rgba(15, 23, 42, 0.14);
+    --shadow-card-featured: 0 1px 2px 0 rgba(15, 23, 42, 0.06), 0 12px 28px -10px rgba(109, 79, 216, 0.28);
+    --shadow-pop: 0 4px 12px -4px rgba(15, 23, 42, 0.1), 0 24px 56px -16px rgba(15, 23, 42, 0.25);
+    --shadow-lavender: 0 4px 14px -4px rgba(109, 79, 216, 0.45);
+    --shadow-lime: 0 4px 14px -4px rgba(77, 124, 15, 0.35);
+    --shadow-control: 0 1px 2px 0 rgba(15, 23, 42, 0.12);
+    --shadow-nav-active: 0 1px 2px 0 rgba(15, 23, 42, 0.06), 0 4px 12px -6px rgba(15, 23, 42, 0.12);
+    --shadow-bar: 0 -6px 24px rgba(15, 23, 42, 0.08);
+
+    --color-overlay: rgba(15, 23, 42, 0.38);
+    --color-hover-tint: rgba(15, 23, 42, 0.04);
+    --color-grid: rgba(15, 23, 42, 0.08);
+    --color-sheen: rgba(255, 255, 255, 0.6);
+  }
+
+  :root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none;
   }
 }
 

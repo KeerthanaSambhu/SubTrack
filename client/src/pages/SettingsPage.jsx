@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { LogOut, Shield, User, Coins, Check } from 'lucide-react';
+import { LogOut, Shield, User, Coins, Check, Palette } from 'lucide-react';
+import ThemeToggle from '../components/ui/ThemeToggle';
 import PageHeader from '../components/layout/PageHeader';
 import Button from '../components/ui/Button';
 import PasswordInput from '../components/ui/PasswordInput';
@@ -125,7 +126,7 @@ function CurrencyPreference() {
         hint="All dashboard headline analytics, charts, and summary metrics will automatically calculate in this currency."
       >
         {(ids) => (
-          <Select {...ids} value={user.currency} onChange={handleChange} disabled={saving} className="sm:max-w-xs font-mono font-medium">
+          <Select {...ids} value={user.currency} onChange={handleChange} disabled={saving} wrapperClassName="sm:max-w-xs" className="font-mono font-medium">
             {CURRENCIES.map((c) => (
               <option key={c.value} value={c.value}>
                 {c.value} ({c.symbol}) — {c.label}
@@ -231,6 +232,13 @@ export default function SettingsPage() {
 
         <Section title="Currency & Localization" description="Default presentation currency for summaries and charts." icon={Coins}>
           <CurrencyPreference />
+        </Section>
+
+        <Section title="Appearance" description="Choose light, dark, or follow your device setting." icon={Palette}>
+          <div className="space-y-3">
+            <ThemeToggle showLabels />
+            <p className="text-xs text-faint">Saved on this device. System follows your operating system's light or dark mode.</p>
+          </div>
         </Section>
 
         <Section title="Security & Authentication" description="Ensure your account is protected with strong credentials." icon={Shield}>

@@ -15,28 +15,23 @@ export default function StatCard({
 }) {
   const accentStyles = {
     lavender: {
-      icon: 'bg-lavender/12 text-lavender border-lavender/25 shadow-[0_0_16px_-4px_rgba(167,139,250,0.35)]',
-      glow: 'rgba(167, 139, 250, 0.08)',
+      icon: 'bg-lavender/12 text-lavender border-lavender/25 shadow-[0_0_16px_-4px_var(--color-lavender-glow)]',
       indicator: 'bg-lavender',
     },
     lime: {
-      icon: 'bg-lime/12 text-lime border-lime/25 shadow-[0_0_16px_-4px_rgba(196,232,101,0.3)]',
-      glow: 'rgba(196, 232, 101, 0.07)',
+      icon: 'bg-lime/12 text-lime border-lime/25 shadow-[0_0_16px_-4px_var(--color-lime-glow)]',
       indicator: 'bg-lime',
     },
     warn: {
-      icon: 'bg-warn/12 text-warn border-warn/25 shadow-[0_0_16px_-4px_rgba(251,191,36,0.25)]',
-      glow: 'rgba(251, 191, 36, 0.06)',
+      icon: 'bg-warn/12 text-warn border-warn/25 shadow-[0_0_16px_-4px_color-mix(in_oklab,var(--color-warn)_30%,transparent)]',
       indicator: 'bg-warn',
     },
     muted: {
       icon: 'bg-raised text-muted border-line-strong',
-      glow: 'rgba(255, 255, 255, 0.02)',
       indicator: 'bg-muted',
     },
   }[accent] || {
     icon: 'bg-lavender/12 text-lavender border-lavender/25',
-    glow: 'rgba(167, 139, 250, 0.08)',
     indicator: 'bg-lavender',
   };
 
@@ -46,14 +41,14 @@ export default function StatCard({
     <div
       className={`card group relative flex min-w-0 flex-col overflow-hidden p-4.5 sm:p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[var(--shadow-card-hover)] ${
         featured
-          ? 'border-lavender/30 bg-gradient-to-b from-[rgba(167,139,250,0.09)] via-surface to-surface shadow-[var(--shadow-card-featured)]'
+          ? 'border-lavender/30 bg-gradient-to-b from-lavender/10 via-surface to-surface shadow-[var(--shadow-card-featured)]'
           : 'bg-surface'
       } ${className}`}
     >
       {/* Subtle top indicator bar */}
       <div
         className={`absolute inset-x-0 top-0 h-[2px] transition-opacity duration-200 ${
-          featured ? 'opacity-100 bg-gradient-to-r from-transparent via-lavender to-transparent' : 'opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-white/20 to-transparent'
+          featured ? 'opacity-100 bg-gradient-to-r from-transparent via-lavender to-transparent' : 'opacity-0 group-hover:opacity-100 bg-gradient-to-r from-transparent via-fg/15 to-transparent'
         }`}
         aria-hidden
       />

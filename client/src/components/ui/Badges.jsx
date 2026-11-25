@@ -3,8 +3,8 @@ import { getCategory } from '../../lib/constants';
 const STATUS_STYLES = {
   active: {
     label: 'Active',
-    className: 'bg-lime/10 text-lime border border-lime/25 shadow-[0_0_12px_-2px_rgba(196,232,101,0.2)]',
-    dot: 'bg-lime shadow-[0_0_6px_rgba(196,232,101,0.8)]',
+    className: 'bg-lime/10 text-lime border border-lime/25 shadow-[0_0_12px_-2px_var(--color-lime-glow)]',
+    dot: 'bg-lime shadow-[0_0_6px_var(--color-lime-glow)]',
   },
   paused: {
     label: 'Paused',
@@ -64,7 +64,7 @@ export function SubscriptionAvatar({ subscription, size = 'md' }) {
       style={{
         backgroundColor: `color-mix(in oklab, ${cat.color} 16%, var(--color-surface))`,
         color: `color-mix(in oklab, ${cat.color} 75%, var(--color-fg))`,
-        boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px color-mix(in oklab, ${cat.color} 35%, transparent), 0 4px 12px -2px rgba(0, 0, 0, 0.35)`,
+        boxShadow: `inset 0 1px 0 0 var(--color-sheen), inset 0 0 0 1px color-mix(in oklab, ${cat.color} 35%, transparent), 0 4px 12px -4px color-mix(in oklab, ${cat.color} 30%, transparent)`,
       }}
       aria-hidden
     >

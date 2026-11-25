@@ -16,7 +16,7 @@ export function TooltipCard({ title, rows }) {
                   className="size-2 rounded-full shrink-0"
                   style={{
                     backgroundColor: row.color,
-                    boxShadow: `0 0 6px ${row.color}80`,
+                    boxShadow: `0 0 6px color-mix(in oklab, ${row.color} 50%, transparent)`,
                   }}
                   aria-hidden
                 />
@@ -31,15 +31,22 @@ export function TooltipCard({ title, rows }) {
   );
 }
 
+/*
+ * Chart colours are CSS variables (defined in index.css), so charts switch
+ * with the light/dark theme like everything else. Recharts passes these
+ * straight to SVG fill/stroke, which resolve var() at paint time.
+ */
 export const CHART_COLORS = {
-  lavender: '#a78bfa',
-  lavenderStrong: '#906bf9',
-  lime: '#c4e865',
-  muted: '#94a3b8',
-  faint: '#64748b',
-  line: 'rgba(255, 255, 255, 0.08)',
-  surface: '#161922',
-  raised: '#212634',
+  lavender: 'var(--color-lavender)',
+  lavenderStrong: 'var(--color-lavender-strong)',
+  lime: 'var(--color-lime)',
+  muted: 'var(--color-muted)',
+  faint: 'var(--color-faint)',
+  line: 'var(--color-line)',
+  surface: 'var(--color-surface)',
+  raised: 'var(--color-raised)',
+  grid: 'var(--color-grid)',
+  hoverTint: 'var(--color-hover-tint)',
 };
 
 // Recharts axis styling, shared by all charts.
@@ -51,7 +58,7 @@ export const axisProps = {
 };
 
 export const gridProps = {
-  stroke: 'rgba(255, 255, 255, 0.06)',
+  stroke: CHART_COLORS.grid,
   strokeDasharray: '3 3',
   vertical: false,
 };

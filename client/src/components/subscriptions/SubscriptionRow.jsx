@@ -34,7 +34,7 @@ export default function SubscriptionRow({
       <button
         type="button"
         onClick={() => openDetails(sub)}
-        className={`group relative flex w-full items-center gap-3.5 rounded-xl border border-transparent px-3 py-3 text-left transition-all duration-150 hover:border-line-strong hover:bg-raised/75 hover:shadow-[0_4px_16px_-4px_rgba(0,0,0,0.3)] sm:gap-4 sm:px-4 ${
+        className={`group relative flex w-full items-center gap-3.5 rounded-xl border border-transparent px-3 py-3 text-left transition-all duration-150 hover:border-line-strong hover:bg-raised/75 hover:shadow-[var(--shadow-card)] sm:gap-4 sm:px-4 ${
           muted ? 'opacity-70 hover:opacity-100' : ''
         }`}
         aria-label={`${sub.name}, ${formatMoney(sub.amount, sub.currency)} per ${cycle.noun}. View details`}

@@ -1,5 +1,6 @@
 import { Wallet, BellRing, Scissors, ShieldCheck } from 'lucide-react';
 import Logo from '../ui/Logo';
+import ThemeToggle from '../ui/ThemeToggle';
 
 const POINTS = [
   {
@@ -66,7 +67,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
 
         <div className="relative z-10 flex items-center gap-2 text-xs text-faint">
           <ShieldCheck className="size-4 text-lime" aria-hidden />
-          <span>Private & Encrypted · Local Demonstration Engine with Web Crypto SHA-256</span>
+          <span>Passwords hashed with bcrypt · Your data stored securely in MongoDB</span>
         </div>
 
         {/* Quiet decorative orbital rings */}
@@ -83,6 +84,9 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
 
       {/* Form panel */}
       <main className="flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-16 xl:px-20 relative">
+        <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+          <ThemeToggle />
+        </div>
         <div className="mb-8 lg:hidden">
           <Logo />
         </div>

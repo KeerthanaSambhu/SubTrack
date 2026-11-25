@@ -62,7 +62,7 @@ export default function HorizontalBarChart({
           barCategoryGap={12}
         >
           <CartesianGrid
-            stroke="rgba(255, 255, 255, 0.05)"
+            stroke={CHART_COLORS.grid}
             horizontal={false}
             strokeDasharray="3 3"
           />
@@ -90,7 +90,7 @@ export default function HorizontalBarChart({
           <Tooltip
             content={renderTooltip}
             cursor={{
-              fill: 'rgba(255, 255, 255, 0.04)',
+              fill: CHART_COLORS.hoverTint,
               radius: 6,
             }}
           />

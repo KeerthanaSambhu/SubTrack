@@ -25,7 +25,7 @@ export function FullPageSpinner() {
 export function Skeleton({ className = '' }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-xl bg-raised/60 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/[0.04] before:to-transparent ${className}`}
+      className={`relative overflow-hidden rounded-xl bg-raised/60 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-fg/[0.05] before:to-transparent ${className}`}
       aria-hidden
     />
   );

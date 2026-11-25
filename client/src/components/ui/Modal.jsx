@@ -90,7 +90,7 @@ export default function Modal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/75 backdrop-blur-md"
+            className="absolute inset-0 bg-[var(--color-overlay)] backdrop-blur-md"
             onClick={() => !busy && onClose()}
             aria-hidden
           />

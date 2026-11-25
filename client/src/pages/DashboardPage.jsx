@@ -46,8 +46,9 @@ function greeting() {
 function Panel({ title, icon: Icon, badge, action, children, className = '' }) {
   return (
     <section className={`card flex min-w-0 flex-col p-4.5 sm:p-6 shadow-[var(--shadow-card)] hover:border-line-strong transition-all duration-200 ${className}`}>
-      <div className="mb-4 flex items-center justify-between gap-3 border-b border-line-subtle pb-3.5">
-        <div className="flex items-center gap-2.5">
+      {/* flex-wrap: in narrow columns the action link drops below instead of squeezing the title */}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-line-subtle pb-3.5">
+        <div className="flex min-w-0 items-center gap-2.5">
           {Icon && (
             <span className="flex size-7 items-center justify-center rounded-lg bg-raised text-lavender border border-line">
               <Icon className="size-3.5" aria-hidden />
@@ -92,7 +93,7 @@ function WelcomeState({ name, onAdd, onLoadSample }) {
         aria-hidden
       />
 
-      <span className="relative mx-auto mb-6 flex size-16 items-center justify-center rounded-2xl bg-lavender/15 text-lavender ring-1 ring-lavender/30 shadow-[0_0_24px_rgba(167,139,250,0.25)]">
+      <span className="relative mx-auto mb-6 flex size-16 items-center justify-center rounded-2xl bg-lavender/15 text-lavender ring-1 ring-lavender/30 shadow-[0_0_24px_var(--color-lavender-glow)]">
         <Sparkles className="size-8" aria-hidden />
       </span>
 
