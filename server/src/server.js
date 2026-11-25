@@ -2,7 +2,14 @@ import config from './config/index.js';
 import { connectDatabase, disconnectDatabase } from './config/db.js';
 import { createApp } from './app.js';
 
-await connectDatabase(config.mongoUri);
+// Local / long-running server: connect once at startup and stop with a clear
+// message if the database is unreachable. (On Vercel, src/app.js is used
+// instead and connects on the first request.)
+try {
+  await connectDatabase(config.mongoUri);
+} catch {
+  process.exit(1); // connectDatabase has already printed what went wrong
+}
 
 const app = createApp();
 const server = app.listen(config.port, () => {
